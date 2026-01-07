@@ -288,7 +288,7 @@
             <a href="#capabilities">Capabilities</a>
             <a href="#services">Services</a>
             <a href="#flow">Flow</a>
-            <a class="btn btn-primary" href="http://localhost:8080/api/health">API Health</a>
+            <a class="btn btn-primary" href="/api/health">API Health</a>
         </nav>
     </div>
 </header>
@@ -305,7 +305,7 @@
             </p>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <a class="btn btn-primary" href="https://github.com/mukhiddinov/Agri-Chain">View Platform</a>
-                <a class="btn" href="http://localhost:8080/api/info">API Info</a>
+                <a class="btn" href="/api/info">API Info</a>
             </div>
             <div class="metrics">
                 <div class="metric">
@@ -415,7 +415,7 @@
             <div class="step" data-step="1">
                 <h3>Order created</h3>
                 <p style="color: var(--muted); margin: 6px 0 0;">
-                    Order API receives intake, persists intent, and emits <code>order.created</code> to Kafka.
+                    Order API receives intake, persists intent, and emits <span class="chip" style="padding:4px 10px; font-size:12px;">order.created</span> to Kafka.
                 </p>
             </div>
             <div class="step" data-step="2">
@@ -445,8 +445,8 @@
             <p style="margin: 0; color: var(--muted);">Start the services with Docker Compose, then hit the gateway endpoints to validate readiness.</p>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a class="btn btn-primary" href="http://localhost:8080/api/health">Check health</a>
-            <a class="btn" href="http://localhost:8080/api/info">Platform info</a>
+            <a class="btn btn-primary" href="/api/health">Check health</a>
+            <a class="btn" href="/api/info">Platform info</a>
         </div>
     </section>
 
