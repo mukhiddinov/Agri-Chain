@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: payment-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: payment-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+server:
+  port: 8083
+
+web3:
+  rpc:
+    url: ${SEPOLIA_RPC_URL:https://sepolia.infura.io/v3/your-project-id}
+  contract:
+    address: ${ESCROW_CONTRACT_ADDRESS:0x0000000000000000000000000000000000000000}
+
+logging:
+  level:
+    com.agrichain: INFO

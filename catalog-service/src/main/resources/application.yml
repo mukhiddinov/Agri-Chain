@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: catalog-service
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/catalog}
+
+server:
+  port: 8085
+
+logging:
+  level:
+    com.agrichain: INFO
