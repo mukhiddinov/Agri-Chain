@@ -53,6 +53,7 @@ yarn-error.log*
 # Logs
 logs/
 *.log
+*.pid
 
 # Environment
 .env
