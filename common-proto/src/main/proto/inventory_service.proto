@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package com.agrichain.inventory;
+
+option java_multiple_files = true;
+option java_package = "com.agrichain.inventory.grpc";
+option java_outer_classname = "InventoryServiceProto";
+
+// Inventory gRPC service definition
+service InventoryService {
+  rpc ReserveInventory(ReserveInventoryRequest) returns (ReserveInventoryResponse);
+  rpc ReleaseInventory(ReleaseInventoryRequest) returns (ReleaseInventoryResponse);
+  rpc CheckAvailability(CheckAvailabilityRequest) returns (CheckAvailabilityResponse);
+}
+
+// Reserve inventory request
+message ReserveInventoryRequest {
+  string order_id = 1;
+  repeated InventoryItem items = 2;
+}
+
+message InventoryItem {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message ReserveInventoryResponse {
+  bool success = 1;
+  string reservation_id = 2;
+  string message = 3;
+}
+
+// Release inventory request
+message ReleaseInventoryRequest {
+  string reservation_id = 1;
+  string order_id = 2;
+}
+
+message ReleaseInventoryResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Check availability request
+message CheckAvailabilityRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message CheckAvailabilityResponse {
+  bool available = 1;
+  int32 available_quantity = 2;
+}
