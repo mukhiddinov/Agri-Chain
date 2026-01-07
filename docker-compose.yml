@@ -1,15 +1,15 @@
-version: '3.8'
-
 services:
   # Redpanda (Kafka-compatible)
   redpanda:
-    image: docker.redpanda.com/vectorized/redpanda:v23.3.3
+    image: redpandadata/redpanda:v24.2.4
     container_name: agrichain-redpanda
     command:
       - redpanda
       - start
       - --smp 1
+      - --reserve-memory 0M
       - --overprovisioned
+      - --node-id 0
       - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
       - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
       - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
@@ -17,6 +17,7 @@ services:
       - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
       - --rpc-addr redpanda:33145
       - --advertise-rpc-addr redpanda:33145
+      - --mode dev-container
     ports:
       - "19092:19092"
       - "18081:18081"
@@ -26,6 +27,7 @@ services:
       interval: 15s
       timeout: 3s
       retries: 5
+      start_period: 30s
     networks:
       - agrichain-network
 

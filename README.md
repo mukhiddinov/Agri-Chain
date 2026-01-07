@@ -49,13 +49,13 @@ agrichain-platform/
 
 ```bash
 # Start all infrastructure services
-docker-compose up -d
+docker compose up -d
 
 # Verify services are running
-docker-compose ps
+docker compose ps
 
 # Check logs if needed
-docker-compose logs -f
+docker compose logs -f
 ```
 
 Infrastructure includes:
@@ -63,6 +63,8 @@ Infrastructure includes:
 - PostgreSQL: localhost:5432
 - MongoDB: localhost:27017
 - Redis: localhost:6379
+
+Note: Redpanda may take 30-60 seconds to become fully ready.
 
 ### 2. Build Services
 
@@ -75,6 +77,21 @@ mvn clean package
 ```
 
 ### 3. Run Services
+
+**Option 1: Use the startup script (Recommended)**
+
+```bash
+# Start all services with proper initialization and logging
+./scripts/start-services.sh
+
+# View logs
+tail -f logs/*.log
+
+# Stop all services
+./scripts/stop-services.sh
+```
+
+**Option 2: Run services individually**
 
 Each service can be started independently:
 
@@ -274,7 +291,16 @@ curl http://localhost:8080/api/health
 - Complete saga compensation logic
 - GraphQL schema in API Gateway
 
-### Testing
+## Testing
+
+### Quick E2E Test
+
+```bash
+# Run quick end-to-end test
+./scripts/test-e2e.sh
+```
+
+### Build & Test
 
 ```bash
 # Test Java services
@@ -291,14 +317,14 @@ forge test
 ### Stopping Services
 
 ```bash
+# Stop services (if using startup script)
+./scripts/stop-services.sh
+
 # Stop infrastructure
-docker-compose down
+docker compose down
 
 # Stop with volume cleanup
-docker-compose down -v
-
-# Stop Java services (if running in background)
-pkill -f "spring-boot"
+docker compose down -v
 ```
 
 ## Project Structure Details

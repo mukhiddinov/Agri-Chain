@@ -18,6 +18,8 @@ for service in api-gateway order-service inventory-service payment-service orche
         if ps -p $PID > /dev/null 2>&1; then
             echo -e "${GREEN}Stopping ${service} (PID: $PID)${NC}"
             kill $PID 2>/dev/null || true
+            # Wait a bit for graceful shutdown
+            sleep 1
         fi
         rm -f "logs/${service}.pid"
     fi
