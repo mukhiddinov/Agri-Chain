@@ -16,6 +16,9 @@ web3:
     url: ${SEPOLIA_RPC_URL:https://sepolia.infura.io/v3/your-project-id}
   contract:
     address: ${ESCROW_CONTRACT_ADDRESS:0x0000000000000000000000000000000000000000}
+  private-key: ${WEB3_PRIVATE_KEY:}
+  seller:
+    address: ${ESCROW_SELLER_ADDRESS:0x0000000000000000000000000000000000000000}
 
 logging:
   level:

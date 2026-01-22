@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -27,11 +29,19 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable String orderId) {
         log.info("Fetching order: {}", orderId);
-        // Stub: Return placeholder response
-        OrderResponse response = OrderResponse.builder()
-                .orderId(orderId)
-                .status("PENDING")
-                .build();
-        return ResponseEntity.ok(response);
+        return orderService.getOrder(orderId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{orderId}/status")
+    public ResponseEntity<Void> updateStatus(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+        String status = body.get("status");
+        if (status == null || status.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("Updating order status: {} -> {}", orderId, status);
+        orderService.updateOrderStatus(orderId, status);
+        return ResponseEntity.noContent().build();
     }
 }

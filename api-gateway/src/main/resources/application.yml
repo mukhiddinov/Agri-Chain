@@ -1,9 +1,21 @@
 spring:
   application:
     name: api-gateway
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
 
 server:
   port: 8080
+
+gateway:
+  services:
+    order: ${ORDER_SERVICE_URL:http://localhost:8081}
+    catalog: ${CATALOG_SERVICE_URL:http://localhost:8085}
+    payment: ${PAYMENT_SERVICE_URL:http://localhost:8083}
 
 logging:
   level:

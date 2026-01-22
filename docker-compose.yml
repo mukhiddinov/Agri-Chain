@@ -33,17 +33,16 @@ services:
 
   # PostgreSQL for Order and Inventory services
   postgres:
-    image: postgres:16-alpine
+    build: ./postgres-custom
     container_name: agrichain-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_MULTIPLE_DATABASES: orders,inventory
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -116,6 +115,117 @@ services:
   #     - "8180:8080"
   #   networks:
   #     - agrichain-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: agrichain-api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - agrichain-network
+    depends_on:
+      - redpanda
+      - postgres
+      - mongodb
+      - redis
+      - order-service
+      - catalog-service
+      - payment-service
+    environment:
+      # Inject RPC_URL and PRIVATE_KEY for payment service to use with blockchain
+      SEPOLIA_RPC_URL: "https://eth-sepolia.g.alchemy.com/v2/bZrI3-ZI968DG0WToud2d"
+      PRIVATE_KEY: "b147256c48ad5b4180dd81a480e926c9c1e37c0add7b3803c0f07d3e919ef667"
+      # Service URLs for WebClientConfig
+      gateway.services.order: http://order-service:8081
+      gateway.services.catalog: http://catalog-service:8085
+      gateway.services.payment: http://payment-service:8083
+
+  order-service:
+    build: ./order-service
+    container_name: agrichain-order-service
+    ports:
+      - "8081:8081"
+    networks:
+      - agrichain-network
+    depends_on:
+      - redpanda
+      - postgres
+      - inventory-service # Depends on inventory for stock checks
+    environment:
+      # Database connection for Order Service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://agrichain-postgres:5432/orders
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      # Redpanda/Kafka configuration
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: agrichain-redpanda:9092
+      # gRPC client for Inventory Service
+      grpc.client.inventory-service.address: static://agrichain-inventory-service:9090
+      grpc.client.inventory-service.negotiation-type: plaintext
+
+  inventory-service:
+    build: ./inventory-service
+    container_name: agrichain-inventory-service
+    ports:
+      - "8082:8082" # HTTP port (if any)
+      - "9090:9090" # gRPC port
+    networks:
+      - agrichain-network
+    depends_on:
+      - redpanda
+      - postgres
+    environment:
+      # Database connection for Inventory Service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://agrichain-postgres:5432/inventory
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      # Redpanda/Kafka configuration
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: agrichain-redpanda:9092
+
+  payment-service:
+    build: ./payment-service
+    container_name: agrichain-payment-service
+    ports:
+      - "8083:8083"
+    networks:
+      - agrichain-network
+    depends_on:
+      - redpanda
+    environment:
+      # Redpanda/Kafka configuration
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: agrichain-redpanda:9092
+      # Blockchain configuration (assuming these are picked up by the service)
+      SEPOLIA_RPC_URL: "https://eth-sepolia.g.alchemy.com/v2/bZrI3-ZI968DG0WToud2d"
+      PRIVATE_KEY: "b147256c48ad5b4180dd81a480e926c9c1e37c0add7b3803c0f07d3e919ef667"
+
+
+  catalog-service:
+    build: ./catalog-service
+    container_name: agrichain-catalog-service
+    ports:
+      - "8085:8085"
+    networks:
+      - agrichain-network
+    depends_on:
+      - mongodb
+    environment:
+      # MongoDB connection for Catalog Service
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017/catalog?authSource=admin
+
+  orchestrator-service:
+    build: ./orchestrator-service
+    container_name: agrichain-orchestrator-service
+    ports:
+      - "8084:8084" # HTTP port if any
+    networks:
+      - agrichain-network
+    depends_on:
+      - redpanda
+      - order-service
+      - inventory-service
+      - payment-service
+    environment:
+      # Redpanda/Kafka configuration
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: agrichain-redpanda:9092
 
 volumes:
   postgres-data:

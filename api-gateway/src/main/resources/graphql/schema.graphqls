@@ -1,0 +1,72 @@
+type Query {
+    # Orders
+    order(id: ID!): Order
+    orders: [Order!]!
+
+    # Products
+    product(id: ID!): Product
+    products: [Product!]!
+
+    # Payments
+    verifyPayment(transactionHash: String!): PaymentVerification!
+}
+
+type Mutation {
+    # Orders
+    createOrder(input: CreateOrderInput!): Order!
+
+    # Payments
+    processPayment(orderId: ID!, amount: Float!): PaymentResult!
+}
+
+# Order types
+type Order {
+    id: ID!
+    customerId: String!
+    items: [OrderItem!]!
+    status: String!
+    totalAmount: Float!
+    createdAt: String
+}
+
+type OrderItem {
+    productId: String!
+    productName: String!
+    quantity: Int!
+    price: Float!
+}
+
+input CreateOrderInput {
+    customerId: String!
+    items: [OrderItemInput!]!
+}
+
+input OrderItemInput {
+    productId: String!
+    productName: String!
+    quantity: Int!
+    price: Float!
+}
+
+# Product types
+type Product {
+    id: ID!
+    name: String!
+    description: String
+    category: String
+    price: Float!
+    unit: String
+    stockQuantity: Int
+}
+
+# Payment types
+type PaymentResult {
+    orderId: ID!
+    transactionHash: String!
+    status: String!
+}
+
+type PaymentVerification {
+    transactionHash: String!
+    verified: Boolean!
+}

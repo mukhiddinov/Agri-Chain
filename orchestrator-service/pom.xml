@@ -46,6 +46,12 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- REST client -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

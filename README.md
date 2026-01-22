@@ -1,5 +1,7 @@
 # AgriChain Digital Procurement Platform
 
+## Overview
+
 A blockchain-enabled procurement platform for agricultural supply chain management, built with microservices architecture, gRPC, Kafka, and Ethereum smart contracts.
 
 ## Architecture Overview

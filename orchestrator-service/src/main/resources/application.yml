@@ -17,6 +17,11 @@ grpc:
 server:
   port: 8084
 
+orchestrator:
+  services:
+    order: ${ORDER_SERVICE_URL:http://localhost:8081}
+    payment: ${PAYMENT_SERVICE_URL:http://localhost:8083}
+
 logging:
   level:
     com.agrichain: INFO
